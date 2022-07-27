@@ -10,22 +10,21 @@ class Solution {
         val sortedDistinctNumbers = numberToInfo.keys.sorted()
 
         var leftPointer = 0
-        var leftNumber = sortedDistinctNumbers[leftPointer]
 
         val result: ArrayList<List<Int>> = arrayListOf()
 
-        while (leftNumber <= 0) {
-            var rightPointer = sortedDistinctNumbers.size - 1
-
+        while (leftPointer < sortedDistinctNumbers.size && sortedDistinctNumbers[leftPointer] <= 0) {
+            val leftNumber = sortedDistinctNumbers[leftPointer]
             numberToInfo[leftNumber]!!.takeNumberInUsage()
 
-            var rightNumber = sortedDistinctNumbers[rightPointer]
-            while (rightNumber >= (leftNumber * -0.5)) {
+            var rightPointer = sortedDistinctNumbers.size - 1
+
+            while (rightPointer >= 0 && sortedDistinctNumbers[rightPointer] >= ((leftNumber * -0.5))) {
+                val rightNumber = sortedDistinctNumbers[rightPointer]
                 numberToInfo[rightNumber]!!.takeNumberInUsage()
 
                 val complementaryNumber = -1 * (leftNumber + rightNumber)
-
-                if (leftNumber <= complementaryNumber && complementaryNumber <= rightNumber) {
+                if (leftNumber <= -0.5 * rightNumber) {
                     numberToInfo[complementaryNumber]?.let {
                         if (it.quantity > 0) {
                             result.add(
@@ -41,11 +40,9 @@ class Solution {
 
                 numberToInfo[rightNumber]!!.freeNumberFromUsage()
                 rightPointer--
-                rightNumber = if (rightPointer > 0) sortedDistinctNumbers[rightPointer] else -1
             }
             numberToInfo[leftNumber]!!.freeNumberFromUsage()
             leftPointer++
-            leftNumber = if(leftPointer < sortedDistinctNumbers.size) sortedDistinctNumbers[leftPointer] else 1
         }
 
         return result
