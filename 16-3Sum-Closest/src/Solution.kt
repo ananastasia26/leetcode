@@ -3,106 +3,36 @@ import java.lang.Math.min
 
 class Solution {
     fun threeSumClosest(nums: IntArray, target: Int): Int {
-        val numberToInfo = hashMapOf<Int, NumberInfo>()
-
-        nums.forEach { number ->
-            numberToInfo.putIfAbsent(number, NumberInfo())
-            numberToInfo[number]!!.increase()
-        }
-
-        val sortedDistinctNumbers = numberToInfo.keys.sorted()
+        val sortedDistinctNumbers = nums.sorted()
 
         var closestSum = nums[0] + nums[1] + nums[2]
         var minDif = abs(target - closestSum)
 
-        var leftPointer = 0
-        while (leftPointer < sortedDistinctNumbers.size ) {
+
+        for (leftPointer in 0 until sortedDistinctNumbers.size - 2) {
             val leftNumber = sortedDistinctNumbers[leftPointer]
-            numberToInfo[leftNumber]!!.takeNumberInUsage()
 
-            val numberToStop = (leftNumber - target) * -0.5
+            var middlePointer = leftPointer + 1
             var rightPointer = sortedDistinctNumbers.size - 1
-            while (rightPointer > 0 && (sortedDistinctNumbers[rightPointer] >= numberToStop || rightPointer == sortedDistinctNumbers.size - 1)) {
-                val rightNumber = sortedDistinctNumbers[rightPointer]
-                if (numberToInfo[rightNumber]!!.quantity <= 0) {
-                    rightPointer--
-                    continue
-                }
-                numberToInfo[rightNumber]!!.takeNumberInUsage()
 
-                val complementaryNumber = -1 * (leftNumber + rightNumber - target)
-                numberToInfo[complementaryNumber]?.let {
-                    if (it.quantity > 0) {
-                        return target
-                    }
-                }
+            while(middlePointer < rightPointer) {
+                val currentSum = leftNumber + sortedDistinctNumbers[middlePointer] + sortedDistinctNumbers[rightPointer]
 
-                val closestNumber = findClosestNumber(sortedDistinctNumbers, numberToInfo,complementaryNumber)
-                val currentDif = abs(target - (closestNumber + leftNumber + rightNumber))
-                if (minDif > currentDif) {
+                val currentDif = abs(target - currentSum)
+
+                if (currentDif < minDif) {
                     minDif = currentDif
-                    closestSum = closestNumber + leftNumber + rightNumber
+                    closestSum = currentSum
                 }
-                numberToInfo[rightNumber]!!.freeNumberFromUsage()
-                rightPointer--
-            }
-            numberToInfo[leftNumber]!!.freeNumberFromUsage()
-            leftPointer++
-        }
 
+                if(currentSum > target) {
+                    rightPointer--
+                } else {
+                    middlePointer++
+                }
+            }
+        }
         return closestSum
-    }
-
-    private fun findClosestNumber(sortedNums: List<Int>, info: HashMap<Int, NumberInfo>,target: Int) : Int {
-        var leftPointer = 0
-        var rightPointer = sortedNums.size -1
-
-        while (leftPointer != rightPointer && leftPointer + 1 != rightPointer) {
-            val middlePointer = (leftPointer + rightPointer) / 2
-            val middleNumber = sortedNums[middlePointer]
-            if (target < middleNumber) {
-                rightPointer = middlePointer
-            } else {
-                leftPointer = middlePointer
-            }
-        }
-        if (leftPointer == rightPointer) {
-            return sortedNums[leftPointer]
-        }
-        while (leftPointer > 0 && info[sortedNums[leftPointer]]!!.quantity <= 0) {
-            leftPointer--
-        }
-        while (rightPointer < sortedNums.size - 1 && info[sortedNums[rightPointer]]!!.quantity <= 0) {
-            rightPointer++
-        }
-
-        if (info[sortedNums[leftPointer]]!!.quantity <= 0) {
-            return sortedNums[rightPointer]
-        } else if (info[sortedNums[rightPointer]]!!.quantity <= 0) {
-            return sortedNums[leftPointer]
-        }
-
-        if (abs(target - sortedNums[leftPointer]) < abs(target - sortedNums[rightPointer])) {
-            return sortedNums[leftPointer]
-        } else {
-            return sortedNums[rightPointer]
-        }
-    }
-
-    inner class NumberInfo {
-        var quantity = 0
-
-        fun increase() {
-            quantity++
-        }
-
-        fun takeNumberInUsage() {
-            quantity--
-        }
-
-        fun freeNumberFromUsage() {
-            quantity++
-        }
     }
 }
 
