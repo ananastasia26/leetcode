@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Solution {
     private final List<Integer> max_int_numbers = List.of(2, 1, 4, 7, 4, 8, 3, 6, 4, 7);
-    private final List<Integer> min_int_numbers = List.of(2, 1, 4, 7, 4, 8, 3, 6, 4, 7);
+    private final List<Integer> min_int_numbers = List.of(2, 1, 4, 7, 4, 8, 3, 6, 4, 8);
     public int reverse(int x) {
         var reversedArrayOfX = this.numberToArrayOfReversedNumbers(x);
         var isNegative = x < 0;
