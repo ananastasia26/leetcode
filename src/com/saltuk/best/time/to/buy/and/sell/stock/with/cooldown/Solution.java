@@ -1,5 +1,8 @@
 package com.saltuk.best.time.to.buy.and.sell.stock.with.cooldown;
 
+/**
+ * 309. Best Time to Buy and Sell Stock with Cooldown
+ */
 class Solution {
     public int maxProfit(int[] prices) {
         int days = prices.length;
